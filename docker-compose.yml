@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  api:
+    env_file:
+      - .env
+    container_name: api
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - PYTHON_VERSION=${PYTHON_VERSION}
+    command: >
+      sh -c "echo Running ML API Server &&
+        python -m uvicorn app.main:app --host 0.0.0.0 --port 80 --reload > /var/log/api/uvicorn.log 2>&1"
+    volumes:
+      - "./.logs/api:/var/log/api"
+      - "./src/app:/wd/app"
+      - "./artifacts:/wd/artifacts"
+      - "./api_contracts:/wd/api_contracts"
+    ports:
+      - "80:80"
